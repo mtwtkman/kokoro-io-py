@@ -1,0 +1,2 @@
+class RequireAccessToken(Exception):
+    pass
