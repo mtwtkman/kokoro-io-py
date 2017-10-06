@@ -1,3 +1,6 @@
+.. image:: https://badge.fury.io/py/kokoroio.svg
+    :target: https://badge.fury.io/py/kokoroio
+
 ============
 What is this
 ============
