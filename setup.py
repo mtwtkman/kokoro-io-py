@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 version = '0.0.1'
@@ -25,7 +25,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     keywords='kokoro.io',
-    packages=['kokoroio'],
+    packages=find_packages(),
     python_requires='>=3.6',
     install_requires=install_requires,
     extras_require=extras_require,

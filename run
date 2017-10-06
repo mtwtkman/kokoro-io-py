@@ -1,8 +1,10 @@
 #! /bin/sh
 
+pip="${d}pip"
+pun="${pip} uninstall -y kokoroio"
 d="venv/bin/"
-b="rm -rf build dist kokoroio.egg-info; ${d}python3 setup.py bdist_wheel"
-i="${d}pip install dist/kokoroio-0.0.1-py3-none-any.whl"
+b="${pun}; rm -rf build dist kokoroio.egg-info; ${d}python3 setup.py bdist_wheel"
+i="${pip} install dist/kokoroio-0.0.1-py3-none-any.whl"
 
 case $1 in
   "b") eval $b;;

@@ -11,6 +11,13 @@ Requirements
 - Python3.6+
 - kokoro.io account(using your access token)
 
+========
+Install
+========
+.. code-block:: bash
+
+   $ pip install kokoroio
+
 =========
 Configure
 =========
