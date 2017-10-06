@@ -10,10 +10,14 @@ extras_require = {
     ]
 }
 
+with open('README.rst') as fp:
+    readme = fp.read()
+
 setup(
     name='kokoroio',
     version=version,
     description='Client for kokoro.io',
+    long_description=readme,
     url='https://github.com/mtwtkman/kokoro-io-py',
     author='mtwtkman',
     license='WTFPL',
