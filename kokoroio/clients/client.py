@@ -84,7 +84,7 @@ class AsyncClient(IClient):
                 return response
 
     def _build_request(self, url, method, **params):
-        with closing(asyncio.get_event_loop()) as loop:
+        with closing(asyncio.new_event_loop()) as loop:
             return loop.run_until_complete(
                 self._request(
                     url,
