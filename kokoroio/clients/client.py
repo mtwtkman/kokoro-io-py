@@ -8,7 +8,6 @@ import aiohttp
 
 API_VERSION = 'v1'
 BASE_URL = f'https://kokoro.io/api/{API_VERSION}'
-GET_OR_DELETE = ['get', 'delete']
 
 
 class IClient:
@@ -17,7 +16,7 @@ class IClient:
 
     def _build_param(self, method, params):
         return {
-            'params' if method in GET_OR_DELETE else 'data': params or {}
+            'params' if method in ['get', 'delete'] else 'data': params or {}
         }
 
     def _build_url(self, endpoint, **path_params):
