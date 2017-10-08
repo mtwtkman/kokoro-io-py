@@ -28,10 +28,24 @@ class IClient:
         raise NotImplementedError
 
     def method(self, name, endpoint):
-        raise NotImplementedError
+        def _req(**params):
+            return self._build_request(
+                self._build_url(endpoint),
+                name,
+                **params
+            )
+        return _req
 
     def method_with_path_params(self, name, endpoint):
-        raise NotImplementedError
+        def _req(**path_params):
+            def __req(**params):
+                return self._build_request(
+                    self._build_url(endpoint, **path_params),
+                    name,
+                    **params,
+                )
+            return __req
+        return _req
 
     @property
     def headers(self):
@@ -53,26 +67,6 @@ class Client(IClient):
             self._build_param(method, params),
         )
 
-    def method_with_path_params(self, name, endpoint):
-        def _req(**path_params):
-            def __req(**params):
-                return self._build_request(
-                    self._build_url(endpoint, **path_params),
-                    name,
-                    **params
-                )
-            return __req
-        return _req
-
-    def method(self, name, endpoint):
-        def _req(**params):
-            return self._build_request(
-                self._build_url(endpoint),
-                name,
-                **params
-            )
-        return _req
-
 
 class AsyncClient(IClient):
     async def _request(self, url, method, attrs):
@@ -92,26 +86,6 @@ class AsyncClient(IClient):
                     self._build_param(method, params),
                 )
             )
-
-    def method(self, name, endpoint):
-        def _req(**params):
-            return self._build_request(
-                self._build_url(endpoint),
-                name,
-                **params,
-            )
-        return _req
-
-    def method_with_path_params(self, name, endpoint):
-        def _req(**path_params):
-            def __req(**params):
-                return self._build_request(
-                    self._build_url(endpoint, **path_params),
-                    name,
-                    **params,
-                )
-            return __req
-        return _req
 
 
 class MissingMethodMapError(Exception):
