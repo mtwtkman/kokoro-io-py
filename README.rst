@@ -73,7 +73,7 @@ Example
 -------
 .. code-block:: python
 
-   >>> client.channels.get()
+   client.channels.get()
 
 ===================
 Asyncronous request
@@ -89,7 +89,7 @@ Example
 -------
 .. code-block:: python
 
-   >>> client.channels.aget()
+   client.channels.aget()
 
 ####
 Test
