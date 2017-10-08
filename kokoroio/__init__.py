@@ -1,6 +1,9 @@
 from .clients import clients
 from .utils import config
-from .exceptions.require_access_token import RequireAccessToken
+
+
+class RequireAccessToken(Exception):
+    pass
 
 
 class Kokoroio:
