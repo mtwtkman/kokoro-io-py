@@ -1,20 +1,20 @@
-from .client import Client
+from .client import BaseClient, MethodMap
 
 
 ENTRY_POINT = 'devices'
 
 
-class DevicesClient:
+class DevicesClient(BaseClient):
     '''
     APIdoc: https://kokoro.io/apidoc#/devices
     '''
     name = ENTRY_POINT
-
-    def __init__(self, access_token):
-        client = Client(access_token)
-        self.get = client.method('get', ENTRY_POINT)
-        self.post = client.method('post', ENTRY_POINT)
-
-        one_endpoint = f'{ENTRY_POINT}/{{device_identifier}}'
-        self.delete = client.method('delete', one_endpoint)
-
+    _method_map = MethodMap(
+        ('get', 'get', ENTRY_POINT),
+        ('cerate', 'post', ENTRY_POINT),
+        (
+            'delete',
+            'delete',
+            f'{ENTRY_POINT}/{{device_identifier}}'
+        ),
+    )

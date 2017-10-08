@@ -1,16 +1,15 @@
-from .client import Client
+from .client import BaseClient, MethodMap
 
 
 ENTRY_POINT = 'bot'
+ONE_ENDPOINT = f'{ENTRY_POINT}/channels/{{channel_id}}'
 
 
-class BotClient:
+class BotClient(BaseClient):
     '''
     APIdoc: https://kokoro.io/apidoc#/bot
     '''
     name = ENTRY_POINT
-
-    def __init__(self, access_token):
-        client = Client(access_token)
-
-        self.send_message = client.method('post', f'{ENTRY_POINT}/channels/{{channel_id}}/messages')
+    _method_map = MethodMap(
+        ('send_message', 'post', f'{ONE_ENDPOINT}/messages')
+    )

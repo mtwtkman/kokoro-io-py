@@ -1,13 +1,20 @@
 from setuptools import setup, find_packages
 
 
-version = '0.0.1'
-install_requires = ['requests']
+with open('version') as fp:
+    version = fp.read().strip()
+install_requires = [
+    'requests',
+    'aiohttp',
+]
 extras_require = {
+    'build': [
+        'wheel',
+    ],
     'dev': [
-        'flake8'
+        'flake8',
         'mypy-lang'
-    ]
+    ],
 }
 
 with open('README.rst') as fp:

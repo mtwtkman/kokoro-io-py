@@ -1,14 +1,16 @@
 #! /bin/sh
 
+v=`cat version`
 pip="${d}pip"
 pun="${pip} uninstall -y kokoroio"
 d="venv/bin/"
 b="${pun}; rm -rf build dist kokoroio.egg-info; ${d}python3 setup.py bdist_wheel"
-i="${pip} install dist/kokoroio-0.0.1-py3-none-any.whl"
+i="${pip} install dist/kokoroio-${v}-py3-none-any.whl"
 
 case $1 in
   "b") eval $b;;
   "i") eval $i;;
   "bi") eval $b; eval $i;;
+  "f") eval "${d}/flake8 kokoroio";;
   "*") $1;;
 esac
