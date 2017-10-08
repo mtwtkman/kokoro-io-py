@@ -39,6 +39,27 @@ Once you create ``Kokoroio`` instance, you can request from two way syncronous o
 
    from kokoroio import Kokoroio
    client = Kokoroio(access_token='xxxxxxx')
+   client.channels.get()  # You received a response!
+
+If an endpoint requires path parameters, you need to pass path parameters as arguments for request method.
+
+.. code-block:: python
+
+   # Assuming you want to post a message to channel whose channel_id is 'hogehoge'.
+   # Url is `channels/<channel_id>`.
+   o = client.channels.send_message(channle_id='hogehoge')
+   # So you can request with a payload.
+   o(message='hi')
+
+   # Ordinary...
+   client.channels.send_message(channle_id='hogehoge')(message='hi')
+
+And you can find every client's methods.
+
+.. code-block:: python
+
+  clients.channels.method_names
+  clients.channels.methods
 
 ===================
 Syncronous request
@@ -52,8 +73,7 @@ Example
 -------
 .. code-block:: python
 
-   >>> client.channels.get().json()
-   >>> client.channels.send_message(channel_id='pripara', message='getchu~')
+   >>> client.channels.get()
 
 ===================
 Asyncronous request
@@ -70,15 +90,6 @@ Example
 .. code-block:: python
 
    >>> client.channels.aget()
-   >>> client.channels.send_message(params={'message': 'getchu~'}, channel_id='pripara')
-
--------
-Example
--------
-.. code-block:: python
-
-   >>> from kokoroio import Kokoroio
-   >>> client = Kokoroio(access_token='
 
 ####
 Test

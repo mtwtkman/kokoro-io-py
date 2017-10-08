@@ -15,16 +15,22 @@ class IClient:
     def __init__(self, access_token):
         self.access_token = access_token
 
-    def _build_param(self, name, params):
+    def _build_param(self, method, params):
         return {
-                'params' if name in GET_OR_DELETE else 'data': params or {}
+            'params' if method in GET_OR_DELETE else 'data': params or {}
         }
 
     def _build_url(self, endpoint, **path_params):
         url = f'{BASE_URL}/{endpoint}'
         return url.format(**path_params) if path_params else url
 
+    def _build_request(self, url, method, **params):
+        raise NotImplementedError
+
     def method(self, name, endpoint):
+        raise NotImplementedError
+
+    def method_with_path_params(self, name, endpoint):
         raise NotImplementedError
 
     @property
@@ -40,14 +46,32 @@ class Client(IClient):
             **attrs,
         )
 
+    def _build_request(self, url, method, **params):
+        return self._request(
+            url,
+            method,
+            self._build_param(method, params),
+        )
+
+    def method_with_path_params(self, name, endpoint):
+        def _req(**path_params):
+            def __req(**params):
+                return self._build_request(
+                    self._build_url(endpoint, **path_params),
+                    name,
+                    **params
+                )
+            return __req
+        return _req
+
     def method(self, name, endpoint):
-        def req(params=None, **path_params):
-            return self._request(
-                self._build_url(endpoint, **path_params),
+        def _req(**params):
+            return self._build_request(
+                self._build_url(endpoint),
                 name,
-                self._build_param(name, params),
+                **params
             )
-        return req
+        return _req
 
 
 class AsyncClient(IClient):
@@ -59,17 +83,35 @@ class AsyncClient(IClient):
             ) as response:
                 return response
 
-    def method(self, name, endpoint):
-        def req(params=None, **path_params):
-            with closing(asyncio.get_event_loop()) as loop:
-                return loop.run_until_complete(
-                    self._request(
-                        self._build_url(endpoint, **path_params),
-                        name,
-                        self._build_param(name, params),
-                    )
+    def _build_request(self, url, method, **params):
+        with closing(asyncio.get_event_loop()) as loop:
+            return loop.run_until_complete(
+                self._request(
+                    url,
+                    method,
+                    self._build_param(method, params),
                 )
-        return req
+            )
+
+    def method(self, name, endpoint):
+        def _req(**params):
+            return self._build_request(
+                self._build_url(endpoint),
+                name,
+                **params,
+            )
+        return _req
+
+    def method_with_path_params(self, name, endpoint):
+        def _req(**path_params):
+            def __req(**params):
+                return self._build_request(
+                    self._build_url(endpoint, **path_params),
+                    name,
+                    **params,
+                )
+            return __req
+        return _req
 
 
 class MissingMethodMapError(Exception):
@@ -77,6 +119,7 @@ class MissingMethodMapError(Exception):
 
 
 MetaMap = namedtuple('MetaMap', ('method url'))
+
 
 class MethodMap(dict):
     def __init__(self, *tuples):
@@ -92,7 +135,7 @@ class BaseClient:
     _method_map = MethodMap()
 
     def __init__(self, access_token):
-        if not hasattr(self,'_method_map'):
+        if not hasattr(self, '_method_map'):
             raise MissingMethodMapError(
                     f'{self.__class__.__name__}: missing `_method_map`'
             )
@@ -103,8 +146,13 @@ class BaseClient:
         for name, meta in self._method_map.items():
             m = meta.method
             u = meta.url
-            setattr(self, name, client.method(m, u))
-            setattr(self, f'a{name}', async_client.method(m, u))
+            client_method = 'method_with_path_params' if '{' in u else 'method'
+            setattr(self, name, getattr(client, client_method)(m, u))
+            setattr(
+                self,
+                f'a{name}',
+                getattr(async_client, client_method)(m, u)
+            )
 
     @property
     def method_names(self):
