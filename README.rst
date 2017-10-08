@@ -46,13 +46,10 @@ If an endpoint requires path parameters, you need to pass path parameters as arg
 .. code-block:: python
 
    # Assuming you want to post a message to channel whose channel_id is 'hogehoge'.
-   # Url is `channels/<channel_id>`.
+   # In this case, url is `channels/hogehoge`.
    o = client.channels.send_message(channle_id='hogehoge')
    # So you can request with a payload.
    o(message='hi')
-
-   # Ordinary...
-   client.channels.send_message(channle_id='hogehoge')(message='hi')
 
 And you can find every client's methods.
 
